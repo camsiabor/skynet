@@ -51,6 +51,7 @@ optstring(const char *key,const char * opt) {
 
 static void
 _init_env(lua_State *L) {
+    fprintf(stdout, "\n[init.env.start] ----------------------------------------\n");
 	lua_pushnil(L);  /* first key */
 	while (lua_next(L, -2) != 0) {
 		int keyt = lua_type(L, -2);
@@ -61,7 +62,8 @@ _init_env(lua_State *L) {
 		const char * key = lua_tostring(L,-2);
 		if (lua_type(L,-1) == LUA_TBOOLEAN) {
 			int b = lua_toboolean(L,-1);
-			skynet_setenv(key,b ? "true" : "false" );
+			skynet_setenv(key, b ? "true" : "false" );
+            fprintf(stdout, "%s=%s\n", key, b ? "true" : "false");
 		} else {
 			const char * value = lua_tostring(L,-1);
 			if (value == NULL) {
@@ -69,10 +71,12 @@ _init_env(lua_State *L) {
 				exit(1);
 			}
 			skynet_setenv(key,value);
+			fprintf(stdout, "%s=%s\n", key, value);
 		}
 		lua_pop(L,1);
 	}
 	lua_pop(L,1);
+    fprintf(stdout, "[init.env.fin] ----------------------------------------\n\n");
 }
 
 int sigign() {
